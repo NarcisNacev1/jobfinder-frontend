@@ -6,7 +6,6 @@ import {
     VStack,
     Heading,
     Text,
-    useColorModeValue,
 } from '@chakra-ui/react';
 
 interface CreateCVFormProps {
@@ -47,11 +46,11 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
         }
     };
 
-    // Colors
-    const bg = useColorModeValue('gray.50', 'gray.800');
-    const formBg = useColorModeValue('white', 'gray.700');
-    const btnBg = useColorModeValue('blue.500', 'blue.300');
-    const btnHover = useColorModeValue('blue.600', 'blue.400');
+    const bg = 'gray.900';
+    const formBg = 'gray.800';
+    const inputBg = 'gray.700';
+    const btnGradient = 'linear(to-r, #FF6B6B, #845EC2)';
+    const highlightColor = '#FF6B6B';
 
     return (
         <Box
@@ -60,21 +59,49 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
             justifyContent="center"
             alignItems="center"
             px={6}
+            minH="80vh"
+            width={"60vh"}
         >
             <Box
                 as="form"
                 onSubmit={handleSubmit}
                 bg={formBg}
                 p={8}
-                borderRadius="md"
-                boxShadow="lg"
-                width={{ base: '100%', sm: '400px' }}
+                borderRadius="xl"
+                boxShadow="dark-lg"
+                width={{ base: '100%', sm: '450px' }}
                 textAlign="center"
+                position="relative"
+                _before={{
+                    content: '""',
+                    position: 'absolute',
+                    top: '-2px',
+                    left: '-2px',
+                    right: '-2px',
+                    bottom: '-2px',
+                    bgGradient: btnGradient,
+                    borderRadius: 'xl',
+                    zIndex: -1,
+                    opacity: 0.3,
+                    transition: '0.3s ease',
+                }}
+                _hover={{
+                    _before: {
+                        opacity: 0.5,
+                    },
+                }}
+                transition="all 0.3s ease"
             >
-                <Heading as="h2" size="lg" mb={4}>
+                <Heading
+                    as="h2"
+                    size="lg"
+                    mb={4}
+                    bgGradient={btnGradient}
+                    bgClip="text"
+                >
                     Create Your CV
                 </Heading>
-                <Text mb={6} color="gray.500">
+                <Text mb={6} color="gray.400">
                     Fill in your details and upload your CV.
                 </Text>
                 <VStack spacing={4}>
@@ -83,7 +110,19 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
                         placeholder="Full Name"
                         value={fullName}
                         onChange={(e) => handleInputChange(e, setFullName)}
-                        focusBorderColor="blue.400"
+                        bg={inputBg}
+                        border="none"
+                        color="white"
+                        _placeholder={{ color: 'gray.400' }}
+                        _hover={{
+                            bg: 'gray.600',
+                            transform: 'translateY(-2px)',
+                        }}
+                        _focus={{
+                            bg: 'gray.600',
+                            boxShadow: `0 0 0 1px ${highlightColor}`,
+                        }}
+                        transition="all 0.3s ease"
                         size="lg"
                     />
                     <Input
@@ -91,7 +130,19 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
                         placeholder="Email"
                         value={email}
                         onChange={(e) => handleInputChange(e, setEmail)}
-                        focusBorderColor="blue.400"
+                        bg={inputBg}
+                        border="none"
+                        color="white"
+                        _placeholder={{ color: 'gray.400' }}
+                        _hover={{
+                            bg: 'gray.600',
+                            transform: 'translateY(-2px)',
+                        }}
+                        _focus={{
+                            bg: 'gray.600',
+                            boxShadow: `0 0 0 1px ${highlightColor}`,
+                        }}
+                        transition="all 0.3s ease"
                         size="lg"
                     />
                     <Input
@@ -99,7 +150,19 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
                         placeholder="Phone Number"
                         value={phoneNumber}
                         onChange={(e) => handleInputChange(e, setPhoneNumber)}
-                        focusBorderColor="blue.400"
+                        bg={inputBg}
+                        border="none"
+                        color="white"
+                        _placeholder={{ color: 'gray.400' }}
+                        _hover={{
+                            bg: 'gray.600',
+                            transform: 'translateY(-2px)',
+                        }}
+                        _focus={{
+                            bg: 'gray.600',
+                            boxShadow: `0 0 0 1px ${highlightColor}`,
+                        }}
+                        transition="all 0.3s ease"
                         size="lg"
                     />
                     <Input
@@ -107,23 +170,39 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
                         placeholder="Location"
                         value={location}
                         onChange={(e) => handleInputChange(e, setLocation)}
-                        focusBorderColor="blue.400"
+                        bg={inputBg}
+                        border="none"
+                        color="white"
+                        _placeholder={{ color: 'gray.400' }}
+                        _hover={{
+                            bg: 'gray.600',
+                            transform: 'translateY(-2px)',
+                        }}
+                        _focus={{
+                            bg: 'gray.600',
+                            boxShadow: `0 0 0 1px ${highlightColor}`,
+                        }}
+                        transition="all 0.3s ease"
                         size="lg"
                     />
                     <Input
                         type="file"
                         onChange={handleFileChange}
-                        focusBorderColor="blue.400"
+                        bg={inputBg}
+                        border="none"
+                        color="white"
                         size="lg"
                         sx={{
                             '::file-selector-button': {
-                                background: btnBg,
+                                bgGradient: btnGradient,
+                                border: 'none',
                                 color: 'white',
                                 borderRadius: 'md',
                                 padding: '0.5rem 1rem',
                                 cursor: 'pointer',
+                                transition: 'transform 0.3s ease',
                                 _hover: {
-                                    background: btnHover,
+                                    transform: 'translateY(-2px)',
                                 },
                             },
                         }}
@@ -131,14 +210,20 @@ const CreateCVForm: React.FC<CreateCVFormProps> = ({ onCreateCV }) => {
                 </VStack>
                 <Button
                     type="submit"
-                    bg={btnBg}
+                    bgGradient={btnGradient}
                     color="white"
                     mt={6}
                     width="100%"
                     size="lg"
                     _hover={{
-                        bg: btnHover,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        opacity: 0.9,
                     }}
+                    _active={{
+                        transform: 'translateY(0)',
+                    }}
+                    transition="all 0.3s ease"
                 >
                     Create CV
                 </Button>
