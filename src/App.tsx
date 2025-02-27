@@ -9,6 +9,7 @@ import './fonts.css';
 const App: React.FC = () => {
     const [cvCreated, setCvCreated] = useState<boolean>(false);
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [aiRecommendation, setAiRecommendation] = useState<string>('');
 
     const handleCvCreate = async (cvData: FormData) => {
         const response = await fetch('http://127.0.0.1:8000/api/cv/', {
@@ -26,11 +27,15 @@ const App: React.FC = () => {
         });
         const data = await response.json();
         setJobs(data.ranked_jobs || []);
+        setAiRecommendation(data.ai_recommendation || '');
     };
 
     const containerBg = useColorModeValue('#1A202C', '#2D3748');
     const btnBg = useColorModeValue('#FF6A00', '#FF6A00');
     const btnHover = useColorModeValue('#FF4500', '#FF4500');
+
+    // Determine if we're in the jobs display mode
+    const showingJobs = jobs.length > 0;
 
     return (
         <Box
@@ -62,7 +67,7 @@ const App: React.FC = () => {
                 borderRadius="lg"
                 boxShadow="0px 10px 20px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1)"
                 width={{base: '90%', sm: '400px', lg: "600px"}}
-                height={'55rem'}
+                height={'733px'}
                 textAlign="center"
                 position="relative"
                 _before={{
@@ -84,29 +89,31 @@ const App: React.FC = () => {
                     }
                 }}
             >
-                <Heading
-                    as="h1"
-                    size="xl"
-                    mb={6}
-                    fontFamily="'Orbitron', sans-serif"
-                    bgGradient="linear(to-r, #FF6A00, #FF4500)"
-                    bgClip="text"
-                    letterSpacing="wider"
-                    fontWeight="bold"
-                    fontSize="4xl"
-                    textTransform="uppercase"
-                    _hover={{
-                        transform: 'translateY(-2px)',
-                        textShadow: '0 0 20px rgba(255,106,0,0.3)'
-                    }}
-                    transition="all 0.3s ease"
-                >
-                    Job Finder
-                </Heading>
+                {!showingJobs && (
+                    <Heading
+                        as="h1"
+                        size="xl"
+                        mb={6}
+                        fontFamily="'Orbitron', sans-serif"
+                        bgGradient="linear(to-r, #FF6A00, #FF4500)"
+                        bgClip="text"
+                        letterSpacing="wider"
+                        fontWeight="bold"
+                        fontSize="4xl"
+                        textTransform="uppercase"
+                        _hover={{
+                            transform: 'translateY(-2px)',
+                            textShadow: '0 0 20px rgba(255,106,0,0.3)'
+                        }}
+                        transition="all 0.3s ease"
+                    >
+                        Job Finder
+                    </Heading>
+                )}
                 <VStack spacing={6}>
                     {!cvCreated ? (
                         <CreateCVForm onCreateCV={handleCvCreate}/>
-                    ) : (
+                    ) : !showingJobs ? (
                         <Button
                             onClick={handleFindJobs}
                             bg={btnBg}
@@ -122,8 +129,9 @@ const App: React.FC = () => {
                         >
                             Find Jobs
                         </Button>
-                    )}
-                    {jobs.length > 0 && <JobDisplay jobs={jobs}/>}
+                    ) : null}
+
+                    {showingJobs && <JobDisplay jobs={jobs} ai_recommendations={aiRecommendation}/>}
                 </VStack>
             </Box>
         </Box>
