@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Box, Button, Heading, VStack, useColorModeValue } from '@chakra-ui/react';
 import CreateCVForm from './sections/CreateCVForm';
 import JobDisplay from './sections/JobDisplay';
-import { Job } from './sections/JobDisplay';
+import { Job, AIRecommendation } from './sections/JobDisplay';
 
 import './fonts.css';
 
 const App: React.FC = () => {
     const [cvCreated, setCvCreated] = useState<boolean>(false);
-    const [jobs, setJobs] = useState<Job[]>([]);
-    const [aiRecommendation, setAiRecommendation] = useState<string>('');
+    const [methodAJobs, setMethodAJobs] = useState<Job[]>([]);
+    const [methodBJobs, setMethodBJobs] = useState<Job[]>([]);
+    const [aiRecommendation, setAiRecommendation] = useState<AIRecommendation | null>(null);
 
     const handleCvCreate = async (cvData: FormData) => {
         const response = await fetch('http://127.0.0.1:8000/api/cv/', {
@@ -26,8 +27,9 @@ const App: React.FC = () => {
             method: 'GET',
         });
         const data = await response.json();
-        setJobs(data.ranked_jobs || []);
-        setAiRecommendation(data.ai_recommendation || '');
+        setMethodAJobs(data.method_a_jobs || []);
+        setMethodBJobs(data.method_b_jobs || []);
+        setAiRecommendation(data.ai_recommendation || null);
     };
 
     const containerBg = useColorModeValue('#1A202C', '#2D3748');
@@ -35,7 +37,7 @@ const App: React.FC = () => {
     const btnHover = useColorModeValue('#FF4500', '#FF4500');
 
     // Determine if we're in the jobs display mode
-    const showingJobs = jobs.length > 0;
+    const showingJobs = methodAJobs.length > 0 || methodBJobs.length > 0;
 
     return (
         <Box
@@ -56,7 +58,7 @@ const App: React.FC = () => {
                     top: '0',
                     left: '0',
                     width: '100%',
-                    height: '100%',
+                    height: '114%',
                     objectFit: 'cover',
                     zIndex: 0,
                 }}
@@ -66,7 +68,7 @@ const App: React.FC = () => {
                 p={8}
                 borderRadius="lg"
                 boxShadow="0px 10px 20px rgba(0, 0, 0, 0.2), 0px 4px 6px rgba(0, 0, 0, 0.1)"
-                width={{base: '90%', sm: '400px', lg: "600px"}}
+                width={{ base: '90%', sm: '400px', lg: "600px" }}
                 height={'733px'}
                 textAlign="center"
                 position="relative"
@@ -112,7 +114,7 @@ const App: React.FC = () => {
                 )}
                 <VStack spacing={6}>
                     {!cvCreated ? (
-                        <CreateCVForm onCreateCV={handleCvCreate}/>
+                        <CreateCVForm onCreateCV={handleCvCreate} />
                     ) : !showingJobs ? (
                         <Button
                             onClick={handleFindJobs}
@@ -131,7 +133,27 @@ const App: React.FC = () => {
                         </Button>
                     ) : null}
 
-                    {showingJobs && <JobDisplay jobs={jobs} ai_recommendations={aiRecommendation}/>}
+                    {showingJobs && (
+                        <JobDisplay
+                            method_a_jobs={methodAJobs}
+                            method_b_jobs={methodBJobs}
+                            ai_recommendation={aiRecommendation || {
+                                methodAssessment: {
+                                    betterMethod: '',
+                                    justification: '',
+                                },
+                                adjustedMatchScores: {},
+                                bestMatch: {
+                                    jobTitle: '',
+                                    justification: {
+                                        skillsAlignment: '',
+                                        experienceRelevance: '',
+                                        careerGrowthPotential: '',
+                                    },
+                                },
+                            }}
+                        />
+                    )}
                 </VStack>
             </Box>
         </Box>
